@@ -2,21 +2,18 @@ import express from "express";
 import expressWs from "express-ws";
 import cors from "cors";
 
+import { DataImport } from "./DataImport";
+
 const app = expressWs(express()).app;
 const port = 3001;
 
+const dataImport = new DataImport();
+
 app.use(cors());
 
-app.get("/test", (req, res) => {
-  res.send("Success");
-});
-
-app.ws("/test", (ws, req) => {
-  ws.send("Connection opened");
-
-  ws.on("message", (msg) => {
-    console.log(msg);
-    ws.send(`Received ${msg}`);
+app.ws("/data", (ws, req) => {
+  ws.on("message", (msg: string) => {
+    dataImport.setInputMode(msg);
   });
 });
 
