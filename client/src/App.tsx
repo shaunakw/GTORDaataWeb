@@ -1,33 +1,45 @@
-import { useEffect, useState } from "react";
+import { CircularProgress, Stack } from "@mui/material";
+import { useState } from "react";
 import useWebSocket, { ReadyState } from "react-use-websocket";
+import { AppContext } from "./AppContext";
+import { Home } from "./components/Home";
+import { Layouts } from "./components/Layouts";
+import { NavBar } from "./components/NavBar";
 
 function App() {
   const url = "ws://localhost:3001";
   const { sendMessage, lastMessage, readyState } = useWebSocket(url);
-  const [messages, setMessages] = useState<MessageEvent<any>[]>([]);
 
-  useEffect(() => {
-    if (lastMessage !== null) {
-      setMessages((prev) => prev.concat(lastMessage));
-    }
-  }, [lastMessage]);
+  const tabComponents: Record<string, JSX.Element> = {
+    home: <Home />,
+    layouts: <Layouts />,
+  };
+
+  const [tab, setTab] = useState("home");
 
   return (
-    <div>
+    <AppContext.Provider
+      value={{
+        tab,
+        setTab,
+        connectionState: readyState,
+      }}
+    >
+      <NavBar />
       {readyState === ReadyState.OPEN ? (
-        <>
-          <div>Connection open</div>
-          <button onClick={() => sendMessage(JSON.stringify({ type: "test" }))}>
-            Test
-          </button>
-          {messages.map((message, idx) => (
-            <p key={idx}>{message.data}</p>
-          ))}
-        </>
+        tabComponents[tab]
       ) : (
-        <div>Connecting...</div>
+        <Stack
+          height="100vh"
+          alignItems="center"
+          justifyContent="center"
+          spacing={4}
+        >
+          <CircularProgress />
+          <p>Connecting to server...</p>
+        </Stack>
       )}
-    </div>
+    </AppContext.Provider>
   );
 }
 
