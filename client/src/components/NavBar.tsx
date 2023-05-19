@@ -7,7 +7,7 @@ export function NavBar() {
   const { setTab, connectionState } = useContext(AppContext);
 
   return (
-    <AppBar position="fixed">
+    <AppBar position="static">
       <Toolbar>
         <Typography variant="h6" marginRight={3}>
           GTOR Daata

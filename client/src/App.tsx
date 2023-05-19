@@ -25,20 +25,24 @@ function App() {
         connectionState: readyState,
       }}
     >
-      <NavBar />
-      {readyState === ReadyState.OPEN ? (
-        tabComponents[tab]
-      ) : (
-        <Stack
-          height="100vh"
-          alignItems="center"
-          justifyContent="center"
-          spacing={4}
-        >
-          <CircularProgress />
-          <p>Connecting to server...</p>
-        </Stack>
-      )}
+      <Stack height="100vh">
+        <NavBar />
+        <div style={{ flexGrow: 1, minHeight: 0 }}>
+          {readyState === ReadyState.OPEN ? (
+            tabComponents[tab]
+          ) : (
+            <Stack
+              height="100vh"
+              alignItems="center"
+              justifyContent="center"
+              spacing={4}
+            >
+              <CircularProgress />
+              <p>Connecting to server...</p>
+            </Stack>
+          )}
+        </div>
+      </Stack>
     </AppContext.Provider>
   );
 }
