@@ -8,16 +8,16 @@ const paperSx = {
   overflowY: "auto",
 };
 
-export function Home() {
-  const sensors = [];
-  for (let i = 0; i < 100; ++i) {
-    sensors.push({
-      id: i,
-      name: `random_sensor_name`,
-      connected: Math.random() > 0.5,
-    });
-  }
+const sensors: { id: number; name: string; connected: boolean }[] = [];
+for (let i = 0; i < 100; ++i) {
+  sensors.push({
+    id: i,
+    name: `random_sensor_name`,
+    connected: Math.random() > 0.5,
+  });
+}
 
+export function Home() {
   return (
     <Grid
       container
