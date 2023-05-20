@@ -1,10 +1,46 @@
-import { AppBar, Button, Toolbar, Typography } from "@mui/material";
-import { useContext } from "react";
-import { ReadyState } from "react-use-websocket";
+import {
+  AppBar,
+  Button,
+  Menu,
+  MenuItem,
+  Toolbar,
+  Typography,
+} from "@mui/material";
+import { ChangeEvent, useContext, useState } from "react";
 import { AppContext } from "../AppContext";
 
 export function NavBar() {
-  const { setTab, connectionState } = useContext(AppContext);
+  const { ready, setTab, inputMode, setInputMode } = useContext(AppContext);
+
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
+  function setCsvFile(e: ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (file) {
+      console.log(file);
+      setInputMode({ name: "CSV", path: "" });
+    }
+    setAnchorEl(null);
+  }
+
+  function setBinFile(e: ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (file) {
+      console.log(file);
+      setInputMode({ name: "BIN", path: "" });
+    }
+    setAnchorEl(null);
+  }
+
+  function fakeInputMode() {
+    setInputMode({ name: "FAKE" });
+    setAnchorEl(null);
+  }
+
+  function comInputMode() {
+    setInputMode({ name: "COM3" });
+    setAnchorEl(null);
+  }
 
   return (
     <AppBar position="static">
@@ -19,15 +55,42 @@ export function NavBar() {
           Layouts
         </Button>
         <div style={{ flexGrow: 1 }} />
-        {connectionState === ReadyState.OPEN && (
+        {ready && (
           <>
-            <Typography variant="button" marginRight={1}>
+            <Typography variant="button" marginRight={0.5}>
               Input:
             </Typography>
-            <Button color="inherit">COM3</Button>
+            <Button
+              color="inherit"
+              sx={{ minWidth: 0 }}
+              onClick={(e) => setAnchorEl(e.currentTarget)}
+            >
+              {inputMode?.name ?? "None"}
+            </Button>
           </>
         )}
       </Toolbar>
+
+      <Menu
+        open={Boolean(anchorEl)}
+        anchorEl={anchorEl}
+        onClose={() => setAnchorEl(null)}
+      >
+        <MenuItem onClick={fakeInputMode}>Fake Data</MenuItem>
+        <label>
+          <MenuItem>
+            CSV File
+            <input type="file" hidden onChange={setCsvFile} />
+          </MenuItem>
+        </label>
+        <label>
+          <MenuItem>
+            Bin File
+            <input type="file" hidden onChange={setBinFile} />
+          </MenuItem>
+        </label>
+        <MenuItem onClick={comInputMode}>COM Port</MenuItem>
+      </Menu>
     </AppBar>
   );
 }
