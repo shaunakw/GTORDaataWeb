@@ -1,12 +1,15 @@
 import asyncio
 import json
+from serial.tools import list_ports
 from websockets.server import serve, WebSocketServerProtocol
 
 input_mode = None
 
 
 def create_message():
-  msg = { 'ports': ['COM3', 'COM4'] }
+  ports = [port.device for port in list_ports.comports()]
+  ports.sort()
+  msg = { 'ports': ports }
   return msg
 
 
@@ -30,6 +33,7 @@ async def handler(websocket: WebSocketServerProtocol):
 
   async for message in websocket:
     read_message(message)
+    await asyncio.sleep(0.1)
     await websocket.send(json.dumps(create_message()))
 
 
