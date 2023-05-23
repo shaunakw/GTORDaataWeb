@@ -1,6 +1,5 @@
 import { CircularProgress, Stack } from "@mui/material";
 import { useEffect, useState } from "react";
-import useWebSocket, { ReadyState } from "react-use-websocket";
 import { AppContext } from "./AppContext";
 import { Home } from "./components/Home";
 import { Layouts } from "./components/Layouts";
@@ -13,25 +12,32 @@ function App() {
   const [inputMode, setInputMode] = useState<InputMode>();
   const [ports, setPorts] = useState<string[]>([]);
 
-  function onMessage(e: WebSocketEventMap["message"]) {
-    const data: ServerMessage = JSON.parse(e.data);
-    if (data.init) {
-      setInputMode(data.inputMode);
-      setReady(true);
-    }
-    setPorts(data.ports);
-    const msg: ClientMessage = { inputMode };
-    sendMessage(JSON.stringify(msg));
-  }
-
-  const url = "ws://localhost:3001";
-  const { sendMessage, readyState } = useWebSocket(url, { onMessage });
-
   useEffect(() => {
-    if (readyState !== ReadyState.OPEN) {
+    const ws = new WebSocket("ws://localhost:3001");
+
+    ws.onmessage = (e) => {
+      const data: ServerMessage = JSON.parse(e.data);
+      if (data.init) {
+        setInputMode(data.inputMode);
+        setReady(true);
+      }
+
+      setPorts((ports) => {
+        if (ports.toString() !== data.ports.toString()) {
+          return data.ports;
+        }
+        return ports;
+      });
+
+      const msg: ClientMessage = { inputMode };
+      ws.send(JSON.stringify(msg));
+    };
+
+    ws.onclose = () => {
       setReady(false);
-    }
-  }, [readyState]);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const tabComponents: Record<string, JSX.Element> = {
     home: <Home />,

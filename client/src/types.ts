@@ -1,6 +1,6 @@
 export type InputMode = {
   name: string;
-  path?: string;
+  data?: string | Uint8Array;
 };
 
 export type ServerMessage = {

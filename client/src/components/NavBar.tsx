@@ -18,7 +18,7 @@ export function NavBar() {
     const file = e.target.files?.[0];
     if (file) {
       console.log(file);
-      setInputMode({ name: "CSV", path: "" });
+      setInputMode({ name: "CSV", data: "" });
     }
     setAnchorEl(null);
   }
@@ -27,7 +27,7 @@ export function NavBar() {
     const file = e.target.files?.[0];
     if (file) {
       console.log(file);
-      setInputMode({ name: "BIN", path: "" });
+      setInputMode({ name: "BIN", data: new Uint8Array() });
     }
     setAnchorEl(null);
   }
