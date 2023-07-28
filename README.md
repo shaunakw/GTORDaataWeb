@@ -1,5 +1,7 @@
 # GTOR Daata Web
 
+**This project has been moved to the [GTOR Github](https://github.com/Georgia-Tech-Off-Road/GTORDaataWeb)**
+
 Converting [GTORDaata](https://github.com/Georgia-Tech-Off-Road/GTORDaata) into a web app.
 
 ## Setup
